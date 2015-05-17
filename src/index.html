@@ -1,11 +1,25 @@
 <!doctype html>
 <html>
   <head>
+    <!-- typekit fonts -->
+    <script>
+    (function(d) {
+    var config = {
+      kitId: 'rvq5yyp',
+      scriptTimeout: 3000
+    },
+    h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='//use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+    </script>
     <style>
+body {
+  font-family: "ff-dagny-web-pro";
+}
+
 .demo {
-  font-family: "sans-serif";
+  font-family: "ff-meta-serif-web-pro", "sans-serif";
   /*outline: 1px solid black;*/
-  color: red;
+  color: #808;
   /*font-size: 32px;*/
 }
     </style>
@@ -18,14 +32,24 @@ Years,Series 1,Series 2
 2000,10,20
 2001,20,30
 2002,30,-45
-2003,75,60
+2003,105,60
     </simple-graph>
 
-    <p>This graph reads data from a Google Spreadsheet and is clearly superior:</p>
-
+    <p>This graph reads data from a Google Spreadsheet, an option that should only be used during testing:</p>
+  
     <simple-graph class="demo" sheet="1U_gi_kTy6oHiEPpcHsfyKNwwOTJxS8qdg1oQB9jHzJU">
     </simple-graph>
     
+    <p>This graph uses the mode to render as a bar chart instead:</p>
+    
+    <simple-graph class="demo" mode="bar">
+Years,Series 1,Series 2
+2000,10,20
+2001,20,30
+2002,30,-45
+2003,105,60
+    </simple-graph>
+
     <script src="simple-graph.js"></script>
   </body>
 </html>

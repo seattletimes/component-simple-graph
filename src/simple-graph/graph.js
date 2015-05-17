@@ -4,18 +4,19 @@ var rgb = function(r, g, b) {
 
 const LINE = "#888";
 const LABEL_PADDING = 8;
+const BAR_PADDING = 8;
 
 var palette = [
   rgb(229, 175, 155),
-  rgb(202, 105, 81),
-  rgb(255, 218, 162),
+  rgb(163, 193, 221),
   rgb(248, 158, 93),
   rgb(181, 191, 169),
+  rgb(123, 90, 166),
   rgb(121, 143, 113),
   rgb(213, 228, 240),
-  rgb(163, 193, 221),
+  rgb(202, 105, 81),
   rgb(199, 187, 220),
-  rgb(123, 90, 166)
+  rgb(255, 218, 162)
 ];
 
 var detectIntervals = function(bounds) {
@@ -40,7 +41,9 @@ var detectIntervals = function(bounds) {
 }
 
 var Graph = function(element, data) {
+  this.mode = element.getAttribute("mode") || "line";
   this.data = null;
+  this.scaler = null;
   this.canvas = element.querySelector("canvas");
   this.context = this.canvas.getContext("2d");
   
@@ -52,6 +55,14 @@ var Graph = function(element, data) {
   this.draw();
   
   window.addEventListener("resize", this.draw.bind(this));
+  
+  //set up a refresh cycle to catch webfonts
+  //this is a crappy way to work, but Typekit doesn't give us many options
+  var redraw = () => {
+    this.draw();
+    window.setTimeout(redraw, 1000);
+  };
+  // window.setTimeout(redraw, 1000);
 };
 
 Graph.prototype = {
@@ -60,7 +71,7 @@ Graph.prototype = {
     this.styles = {
       color: computed.color,
       background: computed.background,
-      fontFamily: computed.fontFamily,
+      fontFamily: computed.fontFamily.split(",").shift().trim(),
       fontSize: computed.fontSize.replace(/px/, "") * 1
     };
   },
@@ -111,29 +122,34 @@ Graph.prototype = {
       height: this.canvas.height - this.styles.fontSize - LABEL_PADDING
     }
   },
-  draw() {
-    var canvas = this.canvas;
+  setScaler() {
+    var self = this;
+    var barPadding = BAR_PADDING / self.series.length;
+    this.scaler = {
+      y: val => {
+        var scaled = (val - self.bounds.min) / (self.bounds.max - self.bounds.min);
+        return self.box.y + self.box.height - scaled * self.box.height;
+      },
+      x: (val, series) => {
+        series = series || 0;
+        if (self.mode == "bar") {
+          var barWidth = self.scaler.barWidth;
+          var groupWidth = barWidth * self.series.length + BAR_PADDING;
+          var start = BAR_PADDING / 2 + groupWidth * val;
+          return self.box.x + start + series * barWidth;
+        }
+        var scaled = val / (self.xLabels.length - 1);
+        return self.box.x + scaled * self.box.width;
+      },
+      barWidth: self.box.width / (self.xLabels.length * self.series.length) - barPadding
+    }
+  },
+  drawAxes() {
     var context = this.context;
-    
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    
-    // font family/size/colors
-    context.font = `${this.styles.fontSize}px ${this.styles.fontFamily}`;
-    context.fillStyle = this.styles.color;
-    
-    this.setBounds();
-    this.setArea();
-    
     var box = this.box;
     
-    // create scaling function
-    var scaleY = val => {
-      var scaled = (val - this.bounds.min) / (this.bounds.max - this.bounds.min);
-      return box.y + box.height - scaled * box.height;
-    };
-    
     //draw the box outline
+    context.lineWidth = 1;
     context.strokeStyle = LINE;
     context.moveTo(box.x, box.y);
     context.lineTo(box.x, box.y + box.height);
@@ -144,7 +160,7 @@ Graph.prototype = {
     var labelStep = box.width / (this.xLabels.length - 1);
     context.textAlign = "center";
     this.xLabels.forEach((label, i, labels) => {
-      var x = i * labelStep  + box.x;
+      var x = this.scaler.x(i, this.series.length / 2);
       var size = this.styles.fontSize;
       context.fillText(label, x, box.y + box.height + size + LABEL_PADDING);
     });
@@ -164,37 +180,67 @@ Graph.prototype = {
     var line, lineY;
     if (this.bounds.min < 0) {
       line = 0 - interval;
-      lineY = scaleY(line);
+      lineY = this.scaler.y(line);
       while (lineY < box.height) {
         drawY(line, lineY);
         line -= interval;
-        lineY = scaleY(line);
+        lineY = this.scaler.y(line);
         if (line < -1000) break;
       }
     }
     //start with the zero line
     context.strokeStyle = "#888";
     line = 0;
-    lineY = scaleY(line);
+    lineY = this.scaler.y(line);
     while (lineY > 10) {
       drawY(line, lineY);
       context.strokeStyle = "#DDD";
       line += interval;
-      lineY = scaleY(line);
+      lineY = this.scaler.y(line);
     }
+  },
+  draw() {
+    var canvas = this.canvas;
+    var context = this.context;
+    
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    
+    // font family/size/colors
+    context.font = `${this.styles.fontSize}px ${this.styles.fontFamily}`;
+    context.fillStyle = this.styles.color;
+    
+    this.setBounds();
+    this.setArea();
+    this.setScaler();
+    
+    this.drawAxes();
     
     //finally, draw actual series on top of everything else
+    var box = this.box;
+    context.lineWidth = 2;
     this.series.forEach((series, index) => {
       context.strokeStyle = palette[index];
       var step = box.width / (series.length - 1);
-      context.beginPath();
-      series.forEach((d, i) => {
-        var goto = i ? "lineTo" : "moveTo";
-        var x = i * step + box.x;
-        var y = scaleY(d);
-        context[goto](x, y);
-      });
-      context.stroke();
+      if (this.mode == "line") {
+        context.beginPath();
+        series.forEach((d, i) => {
+          var goto = i ? "lineTo" : "moveTo";
+          var x = this.scaler.x(i);
+          var y = this.scaler.y(d);
+          context[goto](x, y);
+        });
+        context.stroke();
+      } else {
+        context.fillStyle = palette[index];
+        series.forEach((d, i) => {
+          context.beginPath();
+          var x = this.scaler.x(i, index);
+          var y = this.scaler.y(d);
+          var zero = this.scaler.y(0);
+          context.fillRect(x, y, this.scaler.barWidth, zero - y);
+        });
+      }
     });
   }
 }
