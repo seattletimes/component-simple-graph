@@ -48,8 +48,12 @@ var Graph = function(element, data) {
   this.canvas = element.querySelector("canvas");
   this.context = this.canvas.getContext("2d");
   
-  //force reflow
-  var _ = element.offsetWidth;
+  var colors = element.getAttribute("colors");
+  if (colors) {
+    this.palette = colors.split(",");
+  } else {
+    this.palette = palette;
+  }
   
   this.setStyles(element);
   this.processData(data);
@@ -145,13 +149,17 @@ Graph.prototype = {
       barWidth: self.box.width / (self.xLabels.length * self.series.length) - barPadding
     }
   },
+  getColor(index) {
+    return this.palette[index] || palette[index % palette.length];
+  },
   drawKey() {
+    if (this.headers.length <= 1) return;
     var key = this.element.querySelector(".key");
     var template = require("./_key.html");
     key.innerHTML = template(this.headers.map((label, i) => {
       return {
         text: label,
-        color: palette[i]
+        color: this.getColor(i)
       }
     }));
   },
@@ -225,14 +233,16 @@ Graph.prototype = {
     this.setArea();
     this.setScaler();
     
-    this.drawKey();
+    if (!this.element.hasAttribute("nokey")) {
+      this.drawKey();
+    }
     this.drawAxes();
     
     //finally, draw actual series on top of everything else
     var box = this.box;
     context.lineWidth = 2;
     this.series.forEach((series, index) => {
-      context.strokeStyle = palette[index];
+      context.strokeStyle = this.getColor(index);
       var step = box.width / (series.length - 1);
       if (this.mode == "line") {
         context.beginPath();
@@ -244,7 +254,7 @@ Graph.prototype = {
         });
         context.stroke();
       } else {
-        context.fillStyle = palette[index];
+        context.fillStyle = this.getColor(index);
         series.forEach((d, i) => {
           context.beginPath();
           var x = this.scaler.x(i, index);

@@ -42,15 +42,20 @@ Years,Series 1,Series 2
     
     <p>This graph uses the mode to render as a bar chart instead:</p>
     
-    <simple-graph mode="bar">
-Years,Series 1,Series 2
-2000,10,20
-2001,20,30
-2002,30,-45
-2003,105,60
+    <simple-graph mode="bar" colors="red,green,blue,orange">
+    	benchmark,Shell,Perl,Python,Ruby_1.8,Ruby_1.9
+      sort,2.14,0.78,0.83,1.47,0.87
+      sort 10x,15.81,6.91,4.80,22.21,9.44
+      sort 20x,35.25,18.42,16.80,601.43,29.80
+      sort 50x,112.12,600.34,126.91,600.61,80.12
+      md5,26.98,0.88,0.94,0.47,0.57
+      text replace,3.00,1.33,4.38,3.02,2.77
+      http get,6.99,3.73,0.89,1.73,1.99
     </simple-graph>
     
-        <simple-graph class="demo" mode="bar" sheet="1U_gi_kTy6oHiEPpcHsfyKNwwOTJxS8qdg1oQB9jHzJU"></simple-graph>
+    <p>This graph uses the "nokey" attribute to suppress key creation:</p>
+    
+    <simple-graph nokey mode="bar" sheet="1U_gi_kTy6oHiEPpcHsfyKNwwOTJxS8qdg1oQB9jHzJU"></simple-graph>
 
     <script src="simple-graph.js"></script>
   </body>
