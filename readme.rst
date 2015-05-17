@@ -34,4 +34,6 @@ Config options
 Notes
 -----
 
+In an attempt to fit your site's CSS, the graph will load computed styles from the DOM and use those for its labels, although it does include some defaults (namely, font-size, margin, and max-width) scoped to the ``simple-graph`` selector. These can be overridden with any more-specific selector (a class is a good way to go).
+
 ``simple-graph`` was built using the `Seattle Times web component template <https://github.com/seattletimes/component-template>`__. It was completed with the support of a Knight-Mozilla code convening at the 2015 Write the Docs conference in Portland, OR.
