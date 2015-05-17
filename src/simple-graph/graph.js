@@ -41,6 +41,7 @@ var detectIntervals = function(bounds) {
 }
 
 var Graph = function(element, data) {
+  this.element = element;
   this.mode = element.getAttribute("mode") || "line";
   this.data = null;
   this.scaler = null;
@@ -77,7 +78,7 @@ Graph.prototype = {
   },
   processData(data) {
     var headers = data.shift();
-    this.headers = headers;
+    this.headers = headers.slice(1);
   
     var series = [];
     for (var i = 0; i < data.length; i++) {
@@ -143,6 +144,16 @@ Graph.prototype = {
       },
       barWidth: self.box.width / (self.xLabels.length * self.series.length) - barPadding
     }
+  },
+  drawKey() {
+    var key = this.element.querySelector(".key");
+    var template = require("./_key.html");
+    key.innerHTML = template(this.headers.map((label, i) => {
+      return {
+        text: label,
+        color: palette[i]
+      }
+    }));
   },
   drawAxes() {
     var context = this.context;
@@ -214,6 +225,7 @@ Graph.prototype = {
     this.setArea();
     this.setScaler();
     
+    this.drawKey();
     this.drawAxes();
     
     //finally, draw actual series on top of everything else

@@ -1,3 +1,5 @@
+@import "flexbox";
+
 simple-graph {
   * {
     -webkit-box-sizing: border-box;
@@ -10,6 +12,22 @@ simple-graph {
   max-width: 650px; //for now
   font-size: 14px;
   margin: 10px 0;
+  
+  .key {
+    .display-flex;
+    .justify-content(center);
+    
+    label {
+      padding: 0 12px;
+      text-align: center;
+    }
+    
+    .block {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+    }
+  }
   
   .aspect-outer {
     width: 100%;
