@@ -7,7 +7,7 @@ require("./simple-graph.less");
 
 //libraries
 var csv = require("./csv");
-var graph = require("./graph");
+var Graph = require("./graph");
 
 var parser = new csv.Parser();
 
@@ -18,7 +18,8 @@ proto.createdCallback = function() {
   this.innerHTML = template();
   html = html.split("\n").map(s => s.trim()).filter(s => s).join("\n");
   var data = parser.parse(html);
-  var header = data.shift();
+  
+  var graph = new Graph(this, data);
 };
 proto.attachedCallback = function() {};
 proto.detachedCallback = function() {};
