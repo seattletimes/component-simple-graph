@@ -4,7 +4,7 @@ component-simple-graph
 A custom element for creating simple, static line and bar charts from CSV data. The first column in the data will be used to generate the x-axis, while remaining columns will be used for data series. For example, the following code would create a chart with five series in it::
 
     <simple-graph mode="bar">
-    	benchmark,Shell,Perl,Python,Ruby_1.8,Ruby_1.9
+      benchmark,Shell,Perl,Python,Ruby_1.8,Ruby_1.9
       sort,2.14,0.78,0.83,1.47,0.87
       sort 10x,15.81,6.91,4.80,22.21,9.44
       sort 20x,35.25,18.42,16.80,601.43,29.80
