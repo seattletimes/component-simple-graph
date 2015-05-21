@@ -52,4 +52,8 @@ proto.attachedCallback = function() {};
 proto.detachedCallback = function() {};
 proto.attributeChangedCallback = function() {};
 
-document.registerElement("simple-graph", { prototype: proto });
+try {
+  document.registerElement("simple-graph", { prototype: proto });
+} catch (e) {
+  console.log("<simple-graph> is already registered.");
+}

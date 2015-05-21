@@ -5,8 +5,8 @@
       "path": ""
     },
     "live": {
-      "bucket": "",
-      "path": ""
+      "bucket": "apps.seattletimes.com",
+      "path": "tags/simple-graph"
     }
   }
 }
