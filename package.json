@@ -1,7 +1,7 @@
 {
   "name": "component-simple-graph",
   "description": "A foolproof web component for non-interactive charts and graphs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Thomas Wilburn",
   "repository": {
     "type": "git",
@@ -9,22 +9,22 @@
   },
   "main": "src/simple-graph/simple-graph",
   "dependencies": {
-    "async": "^0.9.0",
-    "aws-sdk": "^2.0.0-rc.19",
-    "babelify": "^6.1.1",
-    "browserify": "^6.2.0",
-    "chalk": "^0.5.1",
-    "document-register-element": "^0.1.6",
+    "async": "^1.2.1",
+    "aws-sdk": "^2.1.33",
+    "babelify": "^6.1.2",
+    "browserify": "^10.2.4",
+    "chalk": "^1.0.0",
+    "document-register-element": "^0.4.3",
     "dot": "^1.0.2",
-    "exorcist": "^0.1.6",
+    "exorcist": "^0.4.0",
     "grunt": "^0.4.5",
-    "grunt-contrib-connect": "^0.8.0",
+    "grunt-contrib-connect": "^0.10.1",
     "grunt-contrib-watch": "^0.6.1",
     "less": "^2.0.0",
     "mime": "^1.2.11",
-    "shelljs": "^0.3.0",
-    "tabletop": "^1.3.5",
-    "through2": "^0.6.3"
+    "shelljs": "^0.5.1",
+    "tabletop": "^1.4.2",
+    "through2": "^2.0.0"
   },
   "browserify": {
     "transform": [
